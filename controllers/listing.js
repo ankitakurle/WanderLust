@@ -9,6 +9,7 @@ module.exports.index = async (req, res) => {
         allListings = await Listing.find({});
     }
     res.render("listings/index.ejs", { allListings, activeCategory: category || '' });
+    // res.render("listings/index.ejs", { allListings, activeCategory: category || '' });
 };
 
 // module.exports.index=async(req,res)=>{

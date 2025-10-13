@@ -1,29 +1,68 @@
 <% layout('layouts/boilerplate') -%>
 <div class="row mt-3">
-    <div class="col-8 offset-3">
-    <h3><%=listing.title%></h3>
+    <div class="col-8 offset-2">
+    <h2><%=listing.title%></h2>
     </div>
-    <div class="card col-6 offset-3 show-card listing-card">
+    <div class="card col-8 offset-2 show-card listing-card">
         <img src="<%=listing.image.url%>" class="card-img-top show-img" alt="listing_image">
        <div class="card-body">
-          <p class="card-text">Owned By <i><%= listing.owner.username %></i></p>
+        <br/>
+        <h3 class="card-text"> <%=listing.location%>,  <%=listing.country%></h3>
+         <p class="card-text"> <%= listing.guests %> guests<span class="dot"> • </span> <%= listing.bedrooms %> bedrooms </p>
+         <hr/>
+          <p class="card-text"><b>Hosted By  <%= listing.owner.username %></b>
+            <br/>Superhost <span class="dot"> • </span> 8 years hosting </p>
+            <p><i class="fa-solid fa-trophy"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Top 1% of homes</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This home is one of the highest ranked based on ratings, reviews and reliability.</p>
+             <p><i class="fa-solid fa-location-dot"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Peace and quiet</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Guests say this home is in a quiet area.</p>
+            <p><i class="fa-solid fa-key"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Great check-in Experience</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recent guests loved the smooth start to this stay.</p>
+            <hr/>
+             <h4>About this place</h4>
              <p class="card-text"> <%=listing.description%></p>
+           
+             <h4>Price/night</h4>
              <p class="card-text"> &#8377;<%=listing.price.toLocaleString("en-IN")%></p>
-              <p class="card-text"><%=listing.location%></p>
-               <p class="card-text"><%=listing.country%></p>
+              
           </p>
        </div>
     </div> 
  </div>
-    <% if(currUser && listing.owner._id.equals(currUser._id)){%>
+    <% if(currUser && currUser._id.equals(listing.owner._id)){%>
   <div class="btns">
-        <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
+        <a href="/listings/<%=listing._id%>/edit" class="btn btn-dark col-1 offset-2 edit-btn">Edit</a>
         <form method="post" action="/listings/<%=listing._id%>?_method=Delete">
         <button class="btn btn-dark offset-5"> Delete </button>
         </form>
    </div>
      <%}%>
-   <div class="col-8 offset-3 mb-3">
+     <div class="card col-8 offset-2 mb-3 amenities" >
+      <hr/>
+      <h4>What this place offers</h4><br/>
+     <div class="card-body">
+
+    <p><i class="fa-solid fa-kitchen-set"></i> &nbsp;&nbsp;Kitchen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; 
+      <i class="fa-solid fa-wifi"></i>&nbsp;&nbsp; Wifi</p> 
+       <p><i class="fa-solid fa-tv"></i>&nbsp;&nbsp; TV &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <i class="fa-solid fa-square-parking"></i>&nbsp;&nbsp; Free parking </p>
+      <p><i class="fa-solid fa-snowflake"></i>&nbsp;&nbsp; AC – split-type ductless system</p>
+       
+    
+  </div>
+</div>
+   
+    <!-- <div class="col-6 offset-3 mb-3">
+      <hr/>
+      <h4>What this place offers</h4>
+      <div>
+       <p><i class="fa-solid fa-kitchen-set"></i> Kitchen </p> 
+       <p><i class="fa-solid fa-tv"></i> TV </p>
+       <p><i class="fa-solid fa-wifi"></i> Wifi</p>
+      </div>
+
+    </div> -->
+   <div class="col-8 offset-2 mb-3">
       <% if(currUser){%>
           <hr/>
       <h4>Leave a Review</h4>
@@ -64,16 +103,18 @@
           <p class="starability-result card-text" data-rating="<%=review.rating%>"></p>
          <p class="card-text"><%=review.comment%></p>
       </div>
+      <% if (currUser && currUser._id.equals(review.author._id)) { %>
       <form class="mb-3" method="post" action="/listings/<%= listing._id%>/reviews/<%= review._id%>?_method=DELETE">
          <br/>
          <button class="btn btn-sm btn-dark">Delete</button>
       </form>
+      <% } %>
      </div> 
      <%} %>
      </div>
    <%}%>
    </div>
-<div class="col-6 offset-3 mb-3">
+<div class="col-8 offset-2 mb-3">
    <hr/>
   <h3>Where you'll be</h3>
   <br/>

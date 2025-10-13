@@ -1,8 +1,16 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const mongoose=require('mongoose');
 const initData=require("./data.js");
 const Listing=require("../models/listing.js");
+const User = require("../models/user.js");
 
-const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+
+// const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+const DB_url=process.env.ATLAS_DB_URL;
+
 
 main().then(()=>{
     console.log("connected to DB");
@@ -11,15 +19,29 @@ main().then(()=>{
 });
 
 async function main(){
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(DB_url);
 }
 
 const initDB=async()=>{
     await Listing.deleteMany({});
-    initData.data=initData.data.map((obj)=>({...obj,owner:"68e62a93c3f158e8eccf60f3"}));
-    await Listing.insertMany(initData.data);
-    console.log("data was initialized");
-};
+    await User.deleteMany({}); 
+    
+    const user = new User({
+    username: "juhi",
+    email: "juhi@gmail.com"
+   });
+    const registeredUser = await User.register(user, "juhi"); // ✅ hashes password
+
+    const listingsWithOwner = initData.data.map((obj) => ({
+    ...obj,
+    owner: registeredUser._id,
+    }));
+
+    await Listing.insertMany(listingsWithOwner);
+    console.log("Data initialized with owner:", registeredUser._id);
+  };
+
+
 
 initDB();
 

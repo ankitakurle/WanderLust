@@ -29,7 +29,7 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
 const DB_url=process.env.ATLAS_DB_URL;
-
+// const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
 
 main().then(() => {
     console.log("connected to DB");
@@ -89,24 +89,17 @@ app.use((req,res,next)=>{
     next();
 });
 
-// app.get("/demouser",async (req,res)=>{
-//     let fakeuser= new User({
-//         email:"student@gmail.com",
-//         username:"delta-student"
-//     });
-
-//     let registeredUser=await User.register(fakeuser,"password");
-//     res.send(registeredUser);
-// });
 
 
-// app.get("/",(req,res)=>{
-//     res.send("this is root page");
-// });
 
 app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
 app.use("/",userRouter);
+
+
+app.get("/",(req,res)=>{
+     res.redirect("/listings");;
+});
 
 app.use((req,res,next)=>{
     next(new ExpressError(404,"Page Not Found"));

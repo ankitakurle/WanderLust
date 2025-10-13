@@ -92,6 +92,7 @@ body {
 .card-img-top{
     border-radius:1rem !important;
     width:100% !important;
+    height:400px;
     object-fit: cover !important;
 }
 .card-body{
@@ -112,4 +113,12 @@ body {
     opacity:0.3;
     background-color: white;
 }
+
+.dot{
+    color:grey;
+}
+.amenities{
+    border: none;
+
+} 
 

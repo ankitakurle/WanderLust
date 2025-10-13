@@ -12,6 +12,12 @@ const listingSchema= new Schema({
     description:{
         type:String,
     },
+    bedrooms:{
+        type:Number,
+    },
+    guests:{
+        type:Number,
+    },
     image:{
         url:String,
         filename:String,
@@ -58,6 +64,7 @@ const listingSchema= new Schema({
         ],
         required: true
     }
+
 });
 
 listingSchema.post("findOneAndDelete",async(listing)=>{

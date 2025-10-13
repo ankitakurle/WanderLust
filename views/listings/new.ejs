@@ -21,6 +21,21 @@
         class="form-control" required></textarea>
          <div class="invalid-feedback">Please enter a short description</div>
       </div>
+      
+      <div class="row">
+      <div class="mb-3 col-md-4">
+        <label for="bedrooms" class="form-label"> Bedrooms </label>
+        <input type="number" name="listing[bedrooms]" min="1" placeholder="Enter number of bedrooms" class="form-control" required>
+      </div>
+
+      <div class="mb-3 col-md-8">
+        <label for="guests" class="form-label"> Guests per room </label>
+       <input type="number" name="listing[guests]" min="1" placeholder="Enter number of guests" class="form-control"  required>
+       </div>
+
+
+      </div>
+
       <div class="mb-3">
         <label for="image" class="form-label">Upload Image </label>
         <input name="listing[image]" placeholder="enter image(url)" type="file" class="form-control" required>
