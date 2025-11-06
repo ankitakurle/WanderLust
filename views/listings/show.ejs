@@ -114,66 +114,82 @@
      </div>
    <%}%>
    </div>
-<div class="col-8 offset-2 mb-3">
+
+
+
+   <div class="col-8 offset-2 mb-3">
    <hr/>
   <h3>Where you'll be</h3>
   <br/>
   <div id="map" style="height:400px; width:100%; border:1px solid #ccc;"></div>
 </div>
 
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
+  // Combine city and country from your EJS variables
   const locationString = "<%= listing.location %>, <%= listing.country %>";
 
+  // Use Nominatim (OpenStreetMap's free geocoding service)
+  async function loadMap() {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          locationString
+        )}`
+      );
+      const data = await response.json();
 
-  window.initMap = function() {
-    const geocoder = new google.maps.Geocoder();
-
-    geocoder.geocode({ address: locationString }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const coords = results[0].geometry.location;
-
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 13,
-          center: coords,
-        });
-
-        // Creating marker
-        const marker = new google.maps.Marker({
-          position: coords,
-          map: map,
-          title: "<%= listing.title %>",
-        });
-
-
-        const infoWindow = new google.maps.InfoWindow({
-             content: `
-            <div style="font-size:14px; line-height:1.4;">
-              <h5 style="margin:0;"><%= listing.title %></h5>
-              <p style="margin:2px 0;">📍 <%= listing.location %>, <%= listing.country %></p>
-              <p style="margin:0;">💰 ₹<%= listing.price.toLocaleString("en-IN") %></p>
-              <p style="margin-top:4px;"> Welcome to this beautiful stay! Enjoy your visit.</p>
-            </div>
-          `,
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-
-        infoWindow.open(map, marker);
-      } else {
-        console.error("Geocoding failed: " + status);
+      if (data.length === 0) {
         document.getElementById("map").innerHTML =
-          "Map could not be loaded. (" + status + ")";
+          "Map could not be loaded for this location.";
+        return;
       }
-    });
-  };
+
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+
+      // Initialize map
+      const map = L.map("map").setView([lat, lon], 13);
+
+      // Add OpenStreetMap tiles
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 20,
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(map);
+
+      // Add marker
+      const marker = L.marker([lat, lon]).addTo(map);
+
+      // Add popup info
+      const popupContent = `
+        <div style="font-size:14px; line-height:1.4;">
+          <h5 style="margin:0;"><%= listing.title %></h5>
+          <p style="margin:2px 0;">📍 <%= listing.location %>, <%= listing.country %></p>
+          <p style="margin:0;">💰 ₹<%= listing.price.toLocaleString("en-IN") %></p>
+          <p style="margin-top:4px;">Welcome to this beautiful stay! Enjoy your visit.</p>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent).openPopup();
+    } catch (error) {
+      console.error("Error loading map:", error);
+      document.getElementById("map").innerHTML =
+        "Map could not be loaded. Please try again later.";
+    }
+  }
+
+  // Run map loader after DOM is ready
+  document.addEventListener("DOMContentLoaded", loadMap);
 </script>
 
-<!-- Load the Maps API -->
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=<%=process.env.MAPS_API_KEY%>&callback=initMap"
-  async defer>
-</script>
+
 <br/>
 <br/>
