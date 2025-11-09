@@ -1,0 +1,73 @@
+.booking-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  width: 320px;
+  text-align: center;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.price-section {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.new-price {
+  color: #e60073;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.nights {
+  color: gray;
+  display: block;
+  font-size: 14px;
+}
+
+.date-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: gray;
+  margin-bottom: 5px;
+}
+
+input[type="date"], select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.reserve-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(90deg, #ff0055, #ff3385);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.reserve-btn:hover {
+  background: linear-gradient(90deg, #ff3385, #ff0055);
+}
+
+.note {
+  font-size: 12px;
+  color: gray;
+  margin-top: 10px;
+}

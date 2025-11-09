@@ -10,13 +10,13 @@ module.exports.submittingSignup=async(req,res)=>{
          const newUser= new User({email,username});
          const registeredUser=await User.register(newUser,password);
          req.login(registeredUser,(err)=>{
-            if(err){
-                return next(err);
-            }
-            req.flash("success","registration successfull!");
-            res.redirect("/listings");
-         });
-         
+             if(err){
+                 return next(err);
+             }
+             req.flash("success","registration successfull!");
+             res.redirect("/listings");
+           });
+           
         } catch(err){
         req.flash("error",err.message);
         res.redirect("/login");
@@ -28,10 +28,19 @@ module.exports.renderLoginForm=(req,res)=>{
     res.render("users/login.ejs");
 }
 
+// 🛑 FINAL FIX: Access req.session directly and clear it.
 module.exports.submittinLogin=async(req,res)=>{
-        req.flash("success","Welcome back to Wanderlust!");
-        let redirectUrl=res.locals.redirectUrl || "/listings";
-        res.redirect(redirectUrl);
+    req.flash("success","Welcome back to Wanderlust!");
+    
+    // 1. Get the URL directly from the session (saved by isLoggedIn)
+    //    We check req.session.redirectUrl, which contains the reservation POST path.
+    let redirectUrl = req.session.redirectUrl || "/listings";
+    
+    // 2. Clear the URL from the session immediately and robustly.
+    req.session.redirectUrl = null;
+    
+    // 3. Redirect the user to the saved URL
+    res.redirect(redirectUrl);
 }
 
 module.exports.logout=(req,res,next)=>{

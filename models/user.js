@@ -7,7 +7,13 @@ const userSchema= new Schema({
     email:{
         type:String,
         required:true,
-    }
+    },
+    bookings: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Booking'
+        }
+    ]
 
 });
 

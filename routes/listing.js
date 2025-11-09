@@ -7,6 +7,7 @@ const multer  = require('multer')
 const {storage}=require("../cloudconfig.js")
 const upload = multer({ storage })
 const Listing = require("../models/listing.js");
+const bookingController = require("../controllers/booking.js");
 
 
 
@@ -23,6 +24,12 @@ router
 
 router.get("/search",listingController.search );
 
+// Route: POST /listings/:id/reservations
+router.post(
+    "/:id/reservations", 
+    isLoggedIn, 
+    wrapAsync(bookingController.createBooking)
+);
 // new route (must come before :id route)
 router.get("/new", isLoggedIn, listingController.newRenderForm);
 
@@ -37,6 +44,7 @@ router.route("/:id")
     isOwner, 
     wrapAsync(listingController.destroyListing)
 );
+
 
 
 
