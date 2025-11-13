@@ -28,18 +28,18 @@ module.exports.renderLoginForm=(req,res)=>{
     res.render("users/login.ejs");
 }
 
-// 🛑 FINAL FIX: Access req.session directly and clear it.
+// Access req.session directly and clear it.
 module.exports.submittinLogin=async(req,res)=>{
     req.flash("success","Welcome back to Wanderlust!");
     
-    // 1. Get the URL directly from the session (saved by isLoggedIn)
-    //    We check req.session.redirectUrl, which contains the reservation POST path.
+    // Get the URL directly from the session 
+   
     let redirectUrl = req.session.redirectUrl || "/listings";
     
-    // 2. Clear the URL from the session immediately and robustly.
+    // Clear the URL from the session immediately and robustly.
     req.session.redirectUrl = null;
     
-    // 3. Redirect the user to the saved URL
+    // Redirect the user to the saved URL
     res.redirect(redirectUrl);
 }
 

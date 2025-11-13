@@ -6,10 +6,6 @@ const listingController= require("../controllers/listing.js");
 const multer  = require('multer')
 const {storage}=require("../cloudconfig.js")
 const upload = multer({ storage })
-const Listing = require("../models/listing.js");
-const bookingController = require("../controllers/booking.js");
-
-
 
 
 router
@@ -24,12 +20,7 @@ router
 
 router.get("/search",listingController.search );
 
-// Route: POST /listings/:id/reservations
-router.post(
-    "/:id/reservations", 
-    isLoggedIn, 
-    wrapAsync(bookingController.createBooking)
-);
+
 // new route (must come before :id route)
 router.get("/new", isLoggedIn, listingController.newRenderForm);
 
@@ -54,30 +45,3 @@ router.get("/:id/edit", isLoggedIn,isOwner,wrapAsync(listingController.editListi
 
 
 module.exports=router;
-
-// //index route
-// router.get("/",wrapAsync(listingController.index));
-
-
-
-//show route
-// router.get("/:id",listingController.showListing);
-
-
-
-// //create route
-// router.post("/",isLoggedIn, validateListing, wrapAsync(listingController.createListing));
-
-
-
-
-
-//update route
-// router.put("/:id", isLoggedIn,isOwner, validateListing, wrapAsync(listingController.updateListing)
-// );
-
-//destroy route
-// router.delete("/:id", isLoggedIn, isOwner, wrapAsync(listingController.destroyListing)
-// );
-
-

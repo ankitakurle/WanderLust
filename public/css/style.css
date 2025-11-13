@@ -1,4 +1,3 @@
-
 body {
   font-family: "Plus Jakarta Sans", sans-serif !important;
   display:flex;
@@ -30,9 +29,64 @@ body {
     display:flex;
 }
 
+.edit-btn{
+    background-color: rgb(134, 131, 131) !important;
+    padding:5px 25px;
+    color:#fff
+}
+
+.edit-btn:hover{
+    background-color: rgb(102, 99, 99)  !important;
+}
+
 .show-card{
     padding-left: 0;
     padding-right: 0;
+}
+.form-label{
+    font-size: medium;
+}
+
+.starability-heart{
+  transform: scale(0.85);
+  transform-origin: left center;  /* Keeps stars aligned to the left */
+  display: inline-block;
+
+
+}
+.starability-result {
+  transform: scale(0.6);   /* Shrinks the whole star rating block */
+  transform-origin: left center;  /* Keeps stars aligned to the left */
+  display: inline-block;
+  margin: 2px 0;
+}
+.btn-danger{
+    border-radius: 8px;
+    padding:5px 20px;
+   
+}
+.review-card-body{
+    padding-top:20px;
+}
+.review-card{
+    
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10);
+}
+.review-card-text{
+    padding-bottom: 10px;
+}
+.fa-trash{
+    color: gray;
+    font-size: 1.3rem;
+    cursor: pointer; 
+}
+
+.fa-trash:hover{
+    color:red;
+}
+.review-card-body p{
+    font-size: 16px;
 }
 
 /* navbar */
@@ -44,8 +98,21 @@ body {
 .fa-compass{
     color:#fe424d;
     font-size: 2rem;
+    padding-left: 1.4rem;
+}
+
+.fa-circle-chevron-left{
+    color:#fe424d;
+    font-size: 1.8rem;
+    /* padding-left: 1.4rem; */
+}
+.navbar-nav .namingapp{
+    color:#fe424d !important;
+    font-size: 1.3rem;
+
 }
 .nav-link{
+    
     color:#222222 !important;
 }
 
@@ -119,6 +186,4 @@ body {
 }
 .amenities{
     border: none;
-
-} 
-
+}

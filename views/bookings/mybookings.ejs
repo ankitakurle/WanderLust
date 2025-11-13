@@ -1,0 +1,49 @@
+<% layout('layouts/boilerplate') -%>
+<div class="container mt-4 my-bookings-container">
+  <h2 class="mb-4 text-center">All Bookings</h2>
+  
+  <% if (bookings.length === 0) { %>
+    <div class="alert alert-info text-center">
+      You have no bookings yet. Go explore <a href="/listings">places</a>!
+    </div>
+  <% } else { %>
+    <div class="row justify-content-center">
+      <% bookings.forEach(booking => { %> 
+        <div class="col-md-4 col-sm-6 col-10 mb-4">
+          <div class="booking-card shadow-sm border-0">
+            <img src="<%= booking.listing.image.url %>" class="booking-img" alt="<%= booking.listing.title %>">
+            <div class="booking-body">
+              <h5 class="booking-title"><%= booking.listing.title %></h5>
+              <p class="booking-text text-muted mb-1">
+                <i class="fa-solid fa-location-dot"></i> <b><%= booking.listing.location %>, <%= booking.listing.country %></b>
+              </p>
+              <p class="booking-text">
+                <i class="fa-solid fa-calendar-days"></i> <b><%= new Date(booking.checkInDate).toLocaleDateString("en-IN") %></b> → 
+                <b><%= new Date(booking.checkOutDate).toLocaleDateString("en-IN") %></b>
+              </p>
+              <p class="booking-text"><i class="fa-solid fa-users"></i> <b><%= booking.guests %> guests</b> </p>
+              <p class="booking-text">
+                <i class="fa-solid fa-money-check-dollar"></i><b>₹<%= booking.totalPrice.toLocaleString("en-IN") %></b> 
+              </p>
+
+              <div class="d-flex justify-content-left mt-3">
+                <a href="/listings/<%= booking.listing._id %>" class="booking-btn btn btn-outline-dark btn-sm">View Listing</a>
+
+                <!-- Cancel Booking Form -->
+                <form 
+                  action="/bookings/<%= booking._id %>?_method=DELETE" method="POST"
+                  onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                  <button class="btn booking-cancel-btn btn-danger btn-sm">
+                   Cancel 
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+

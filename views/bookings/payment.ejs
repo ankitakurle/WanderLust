@@ -1,0 +1,147 @@
+<% layout('layouts/boilerplate') -%>
+
+
+<div class="row payment-container">
+  
+    
+    <div class="col-md-5 offset-md-1 payment-methods-section">
+        
+        <div class="mb-5">
+            <h4 class="mt-4 mb-4">1. Add a payment method</h4>
+            
+            <div class="payment-selection-box">
+                <form id="paymentForm" action="/listings/<%= listing._id %>/reservations" method="POST">
+                    
+                    <input type="hidden" name="booking[checkInDate]" value="<%= bookingDetails.checkInDate %>">
+                    <input type="hidden" name="booking[checkOutDate]" value="<%= bookingDetails.checkOutDate %>">
+                    <input type="hidden" name="booking[guests]" value="<%= bookingDetails.guests %>">
+
+                    <label for="upi_qr" class="payment-option">
+                        <input type="radio" id="upi_qr" name="payment_method" value="upi_qr" required checked>
+                        <div class="payment-option-content">
+                            <div class="option-details">
+                                <span class="upi-logo">
+                                    <img src="https://img.icons8.com/?size=150&id=zXSWCwWtxBKr&format=png&color=000000" alt="UPI">
+                                </span>
+                                <p class="mb-0">UPI QR code</p>
+                            </div>
+                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
+                        </div>
+                    </label>
+
+                    <label for="upi_id" class="payment-option">
+                        <input type="radio" id="upi_id" name="payment_method" value="upi_id" required>
+                        <div class="payment-option-content">
+                            <div class="option-details">
+                                <span class="upi-logo">
+                                    <img src="https://img.icons8.com/?size=200&id=5RcHTSNy4fbL&format=png&color=000000" alt="UPI">
+                                </span>
+                                <p class="mb-0">UPI ID</p>
+                            </div>
+                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
+                        </div>
+                    </label>
+
+                    <label for="card" class="payment-option">
+                        <input type="radio" id="card" name="payment_method" value="card">
+                        <div class="payment-option-content">
+                            <div class="option-details">
+                                <img src="https://img.icons8.com/?size=23&id=AyJJZSWFUq7u&format=png&color=000000" alt="UPI">
+                                <div class="d-flex flex-column align-items-start">
+                                    <p class="mb-0">Credit or debit card</p>
+                                    <div class="card-logos small text-muted">
+                                        VISA <span class="mx-1">&#x2022;</span> AMEX <span class="mx-1">&#x2022;</span> RuPay
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
+                        </div>
+                    </label>
+                    
+                    <label for="net_banking" class="payment-option">
+                        <input type="radio" id="net_banking" name="payment_method" value="net_banking">
+                        <div class="payment-option-content">
+                            <div class="option-details">
+                                <img src="https://img.icons8.com/?size=22&id=2wOjkyn0JaIv&format=png&color=000000" alt="UPI">
+                               
+                                <p class="mb-0">Net Banking</p>
+                            </div>
+                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
+                        </div>
+                    </label>
+
+                    <div class="mt-4 clearfix">
+                        <button type="submit" class="btn btn-outline-dark btn-airbnb-primary" >
+                            Next
+                        </button>
+                    </div>
+                </form>
+               
+               
+            </div>
+            
+        </div>
+        
+        <div class="mb-5">
+            <h4 class="mb-3">2. Book your reservation</h4>
+            <div class="p-3 border rounded-3 small">
+                <p class="mb-0">By selecting Confirm and Pay, you agree to the full cancellation policy, house rules, and Guest Refund Policy.</p>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="col-md-4">
+        <div class="summary-card">
+            
+            <div class="listing-preview d-flex">
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+                <div class="details">
+                    <h6 class="mb-0"><b><%= listing.title %></b></h6>
+                    <p class="text-muted small mb-0"><%= listing.location %></p>
+                    <span class="small text-muted"><i class="fa-solid fa-star"></i> 4.95 (19)</span>
+                </div>
+            </div>
+
+            <hr>
+            
+            <h6 class="mb-1 small">Free cancellation</h6>
+            <p class="small text-muted mb-3">Cancel before <%= new Date(Date.now() + 86400000 * 15).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %> for a full refund. <a href="#" class="text-dark text-decoration-underline">Full policy</a></p>
+
+            <hr>
+
+            <h6 class="mb-3 small">Dates</h6>
+            <div class="d-flex justify-content-between small mb-3">
+                <p class="mb-0"><%= new Date(bookingDetails.checkInDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) %> - <%= new Date(bookingDetails.checkOutDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+                <a href="/listings/<%= listing._id %>" class="text-dark text-decoration-underline small">Change</a>
+            </div>
+            
+            <h6 class="mb-3 small">Guests</h6>
+            <div class="d-flex justify-content-between small mb-3">
+                <p class="mb-0"><%= bookingDetails.guests %> adult(s)</p>
+                <a href="/listings/<%= listing._id %>" class="text-dark text-decoration-underline small">Change</a>
+            </div>
+
+            <hr>
+            
+            <h6 class="mb-3 small">Price details</h6>
+            
+            <div class="d-flex justify-content-between price-detail-row small">
+                <span>₹<%= listing.price.toLocaleString("en-IN") %> x <%= numberOfNights %> nights</span>
+                <strong>₹<%= subTotal.toLocaleString("en-IN") %></strong>
+            </div>
+
+            <div class="d-flex justify-content-between price-detail-row small">
+                <span>Taxes</span>
+                <strong>₹<%= gstAmount.toLocaleString("en-IN") %></strong>
+            </div>
+            
+            <hr class="mt-2 mb-2">
+
+            <div class="d-flex justify-content-between pt-1">
+                <h6 class="small"><b>Total INR</b></h6>
+                <h6 class="small"><b>₹<%= finalPrice.toLocaleString("en-IN") %></b></h6>
+            </div>
+        </div>
+    </div>
+</div>

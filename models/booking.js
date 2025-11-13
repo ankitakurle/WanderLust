@@ -37,6 +37,18 @@ const bookingSchema = new Schema({
         required: true
     },
 
+    // Payment Info
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'failed'],
+        default: 'pending'
+    },
+    paymentMethod: {
+        type: String,
+        enum: ['upi_qr', 'upi_id', 'card', 'net_banking'],
+        default: 'upi_qr'
+    },
+
     // Metadata
     bookedAt: {
         type: Date,
