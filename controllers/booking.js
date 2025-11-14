@@ -1,7 +1,11 @@
+// controllers/booking.js
 const Listing = require('../models/listing');
 const Booking = require('../models/booking');
 const User = require('../models/user'); 
-
+// ** NEW: Require Razorpay Service **
+const razorpay = require('../services/razorpay'); 
+// ** NEW: Require crypto for signature verification **
+const crypto = require('crypto');
 
 const calculatePrice = (listingPrice, checkInDate, checkOutDate) => {
     const startDate = new Date(checkInDate);
@@ -30,14 +34,77 @@ const calculatePrice = (listingPrice, checkInDate, checkOutDate) => {
     };
 };
 
+// ** NEW: Function to create Razorpay Order (Server-Side) **
+module.exports.createRazorpayOrder = async (req, res) => {
+    try {
+        const { id } = req.params; // Listing ID
+        // Note: req.body is correctly parsed as JSON now due to app.use(express.json())
+        const { checkInDate, checkOutDate, guests } = req.body; 
 
+        if (!checkInDate || !checkOutDate || !guests) {
+            return res.status(400).json({ error: 'Missing booking details.' });
+        }
 
-//createBooking 
+        const listing = await Listing.findById(id);
+        if (!listing) {
+            return res.status(404).json({ error: 'Listing not found.' });
+        }
+        
+        const { finalPrice } = calculatePrice(listing.price, checkInDate, checkOutDate);
+        
+        // Razorpay expects amount in the smallest currency unit (Paisa)
+        const amountInPaisa = Math.round(finalPrice * 100); 
+        
+        // --- FIX FOR RECEIPT LENGTH ERROR (BAD_REQUEST_ERROR) ---
+        const shortListingId = id.substring(0, 8); // Use first 8 characters of listing ID
+        const timestamp = Date.now();
+
+        const options = {
+            amount: amountInPaisa, 
+            currency: "INR",
+            receipt: `order_${shortListingId}_${timestamp}`, // Shortened to fit the < 40 char limit
+            payment_capture: '1' 
+        };
+
+        const order = await razorpay.orders.create(options);
+        
+        res.status(200).json(order); // Send the order details to the client
+        
+    } catch (err) {
+        // Log the full error to help debug other issues, but send a generic message to the client
+        console.error("Razorpay Order Creation Error:", err);
+        res.status(500).json({ error: "Failed to create Razorpay Order" });
+    }
+};
+
+// ** MODIFIED: createBooking (Handles Payment Verification) **
 module.exports.createBooking = async (req, res) => {
 
     const { id } = req.params;
 
-    //Ensure booking data exists
+    // Extract payment proof from the form submission after Razorpay success
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+    
+    // ** 1. Payment Verification (Security Check) **
+    if (razorpay_payment_id && razorpay_order_id && razorpay_signature) {
+        
+        // Verify Signature using Razorpay Key Secret from .env
+        const generated_signature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+            .update(razorpay_order_id + "|" + razorpay_payment_id)
+            .digest('hex');
+
+        if (generated_signature !== razorpay_signature) {
+            req.flash('error', 'Payment verification failed. Please contact support. No booking created.');
+            return res.redirect(`/listings/${id}`); 
+        }
+    } else {
+        // If the route is hit without payment proof
+        req.flash('error', 'Payment transaction was not completed or details are missing. Please try again.');
+        return res.redirect(`/listings/${id}`); 
+    }
+
+
+    //Ensure booking data exists (Booking data comes nested under 'booking' from the EJS form)
     if (!req.body.booking) {
         req.flash('error', 'Booking data is missing. Please select dates and guests.');
         return res.redirect(`/listings/${id}`); 
@@ -69,7 +136,6 @@ module.exports.createBooking = async (req, res) => {
         return res.redirect(`/listings/${id}`);
     }
     
-    // Check for valid dates (Check-out must be after Check-in)
     if (endDate <= startDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
         req.flash('error', 'Please choose valid check-in and check-out dates (Check-out must be after Check-in).');
         return res.redirect(`/listings/${id}`);
@@ -78,7 +144,7 @@ module.exports.createBooking = async (req, res) => {
    
     const { subTotal, gstAmount, finalPrice } = calculatePrice(listing.price, checkInDate, checkOutDate);
    
-    //Create new booking
+    // ** 2. Create new booking (only after successful payment verification) **
     const newBooking = new Booking({
         booker: req.user._id, 
         listing: id,
@@ -86,17 +152,20 @@ module.exports.createBooking = async (req, res) => {
         checkOutDate: endDate,
         guests: guests,
         totalPrice: finalPrice, 
+        // ** Update Payment Status/Info **
+        paymentStatus: 'completed', 
+        paymentMethod: 'razorpay',
+        razorpayPaymentId: razorpay_payment_id // Save the ID
     });
     await newBooking.save();
 
-    // Ensure the 'bookings' array exists on the User object
+    // 3. Update User and Listing
     if (!req.user.bookings) {
         req.user.bookings = [];
     }
     req.user.bookings.push(newBooking._id);
     await req.user.save();
 
-    //  Ensure the 'bookings' array exists on the Listing object
     if (!listing.bookings) {
         listing.bookings = [];
     }
@@ -109,9 +178,7 @@ module.exports.createBooking = async (req, res) => {
 
     req.flash(
     'success', 
-    `🎉 Booking Confirmed! Your stay at <b>${listing.title}</b> is reserved from <b>${checkIn}</b> to <b>${checkOut}</b>. ` +
-    `Subtotal: ₹${subTotal.toLocaleString("en-IN")}. GST (18%): ₹${gstAmount.toLocaleString("en-IN")}. ` +
-    `Total Price (Inc. GST): <b>₹${finalPrice.toLocaleString("en-IN")}</b>.`
+    `✅ Payment Successful! Your stay at <b>${listing.title}</b> is reserved from <b>${checkIn}</b> to <b>${checkOut}</b>. Total Price: <b>₹${finalPrice.toLocaleString("en-IN")}</b>.`
 );
     
     res.redirect(`/listings/${id}`); 
@@ -170,7 +237,7 @@ module.exports.cancelBooking = async (req, res) => {
     }
 };
 
-//showPaymentPage 
+// ** MODIFIED: showPaymentPage (Passes Razorpay Key ID) **
 module.exports.showPaymentPage = async (req, res) => {
     const { id } = req.params;
     const bookingDetails = req.body.booking; 
@@ -209,6 +276,7 @@ module.exports.showPaymentPage = async (req, res) => {
     res.render("bookings/payment", { 
         listing, 
         bookingDetails, 
-        ...priceDetails // Spread the calculated prices and nights
+        ...priceDetails, // Spread the calculated prices and nights
+        razorpayKeyId: process.env.RAZORPAY_KEY_ID // Pass the key to the frontend
     });
 };

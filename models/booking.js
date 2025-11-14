@@ -45,8 +45,14 @@ const bookingSchema = new Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['upi_qr', 'upi_id', 'card', 'net_banking'],
-        default: 'upi_qr'
+        // ** UPDATED: Added 'razorpay' **
+        enum: ['upi_qr', 'upi_id', 'card', 'net_banking', 'razorpay'],
+        default: 'razorpay'
+    },
+    // ** NEW: Store Razorpay Payment ID for verification/reference **
+    razorpayPaymentId: {
+        type: String,
+        required: function() { return this.paymentStatus === 'completed'; } // Required if payment is completed
     },
 
     // Metadata

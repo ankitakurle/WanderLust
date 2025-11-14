@@ -1,103 +1,17 @@
 <% layout('layouts/boilerplate') -%>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<div class="row payment-container">
-  
-    
-    <div class="col-md-5 offset-md-1 payment-methods-section">
-        
-        <div class="mb-5">
-            <h4 class="mt-4 mb-4">1. Add a payment method</h4>
-            
-            <div class="payment-selection-box">
-                <form id="paymentForm" action="/listings/<%= listing._id %>/reservations" method="POST">
-                    
-                    <input type="hidden" name="booking[checkInDate]" value="<%= bookingDetails.checkInDate %>">
-                    <input type="hidden" name="booking[checkOutDate]" value="<%= bookingDetails.checkOutDate %>">
-                    <input type="hidden" name="booking[guests]" value="<%= bookingDetails.guests %>">
+<div class="row">
+    <div class="col-lg-6 mx-auto"> 
+        <h3 class="heading">Booking Summary</h3>
 
-                    <label for="upi_qr" class="payment-option">
-                        <input type="radio" id="upi_qr" name="payment_method" value="upi_qr" required checked>
-                        <div class="payment-option-content">
-                            <div class="option-details">
-                                <span class="upi-logo">
-                                    <img src="https://img.icons8.com/?size=150&id=zXSWCwWtxBKr&format=png&color=000000" alt="UPI">
-                                </span>
-                                <p class="mb-0">UPI QR code</p>
-                            </div>
-                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
-                        </div>
-                    </label>
-
-                    <label for="upi_id" class="payment-option">
-                        <input type="radio" id="upi_id" name="payment_method" value="upi_id" required>
-                        <div class="payment-option-content">
-                            <div class="option-details">
-                                <span class="upi-logo">
-                                    <img src="https://img.icons8.com/?size=200&id=5RcHTSNy4fbL&format=png&color=000000" alt="UPI">
-                                </span>
-                                <p class="mb-0">UPI ID</p>
-                            </div>
-                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
-                        </div>
-                    </label>
-
-                    <label for="card" class="payment-option">
-                        <input type="radio" id="card" name="payment_method" value="card">
-                        <div class="payment-option-content">
-                            <div class="option-details">
-                                <img src="https://img.icons8.com/?size=23&id=AyJJZSWFUq7u&format=png&color=000000" alt="UPI">
-                                <div class="d-flex flex-column align-items-start">
-                                    <p class="mb-0">Credit or debit card</p>
-                                    <div class="card-logos small text-muted">
-                                        VISA <span class="mx-1">&#x2022;</span> AMEX <span class="mx-1">&#x2022;</span> RuPay
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
-                        </div>
-                    </label>
-                    
-                    <label for="net_banking" class="payment-option">
-                        <input type="radio" id="net_banking" name="payment_method" value="net_banking">
-                        <div class="payment-option-content">
-                            <div class="option-details">
-                                <img src="https://img.icons8.com/?size=22&id=2wOjkyn0JaIv&format=png&color=000000" alt="UPI">
-                               
-                                <p class="mb-0">Net Banking</p>
-                            </div>
-                            <span class="custom-radio-container"><span class="custom-radio"></span></span>
-                        </div>
-                    </label>
-
-                    <div class="mt-4 clearfix">
-                        <button type="submit" class="btn btn-outline-dark btn-airbnb-primary" >
-                            Next
-                        </button>
-                    </div>
-                </form>
-               
-               
-            </div>
-            
-        </div>
-        
-        <div class="mb-5">
-            <h4 class="mb-3">2. Book your reservation</h4>
-            <div class="p-3 border rounded-3 small">
-                <p class="mb-0">By selecting Confirm and Pay, you agree to the full cancellation policy, house rules, and Guest Refund Policy.</p>
-            </div>
-        </div>
-        
-    </div>
-    
-    <div class="col-md-4">
         <div class="summary-card">
-            
+           
             <div class="listing-preview d-flex">
-                <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
-                <div class="details">
-                    <h6 class="mb-0"><b><%= listing.title %></b></h6>
+                <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                <div class="details ms-3">
+                    <h4 class="mb-0"><%= listing.title %></h4>
                     <p class="text-muted small mb-0"><%= listing.location %></p>
                     <span class="small text-muted"><i class="fa-solid fa-star"></i> 4.95 (19)</span>
                 </div>
@@ -106,7 +20,16 @@
             <hr>
             
             <h6 class="mb-1 small">Free cancellation</h6>
-            <p class="small text-muted mb-3">Cancel before <%= new Date(Date.now() + 86400000 * 15).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %> for a full refund. <a href="#" class="text-dark text-decoration-underline">Full policy</a></p>
+            <p class="small text-muted mb-3">
+                  <% 
+                      // 1. Convert checkInDate string to a Date object
+                     const checkIn = new Date(bookingDetails.checkInDate);
+                       // 2. Subtract 2 days (2 * 24 * 60 * 60 * 1000 milliseconds)
+                      const cancellationDate = new Date(checkIn.getTime() - (2 * 86400000));
+                   %>
+                       Cancel before <%= cancellationDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %> for a full refund. <a href="#" class="text-dark text-decoration-underline">Full policy</a>
+                   </p>
+            
 
             <hr>
 
@@ -126,22 +49,124 @@
             
             <h6 class="mb-3 small">Price details</h6>
             
-            <div class="d-flex justify-content-between price-detail-row small">
+            <div class="d-flex justify-content-between small">
                 <span>₹<%= listing.price.toLocaleString("en-IN") %> x <%= numberOfNights %> nights</span>
                 <strong>₹<%= subTotal.toLocaleString("en-IN") %></strong>
             </div>
 
-            <div class="d-flex justify-content-between price-detail-row small">
-                <span>Taxes</span>
+            <div class="d-flex justify-content-between small">
+                <span>Taxes (18% GST)</span>
                 <strong>₹<%= gstAmount.toLocaleString("en-IN") %></strong>
             </div>
-            
-            <hr class="mt-2 mb-2">
 
-            <div class="d-flex justify-content-between pt-1">
+            <hr>
+
+            <div class="d-flex justify-content-between">
                 <h6 class="small"><b>Total INR</b></h6>
-                <h6 class="small"><b>₹<%= finalPrice.toLocaleString("en-IN") %></b></h6>
+                <strong>₹<%= finalPrice.toLocaleString("en-IN") %></strong>
             </div>
+
+            <hr class="mt-4">
+
+            <button id="pay-now-button" class="btn btn-danger w-100" type="button">
+                Agree and Pay ₹<%= finalPrice.toLocaleString("en-IN") %>
+            </button>
+            
+            <input type="hidden" id="listing-id" value="<%= listing._id %>">
+            <input type="hidden" id="check-in-date" value="<%= bookingDetails.checkInDate %>">
+            <input type="hidden" id="check-out-date" value="<%= bookingDetails.checkOutDate %>">
+            <input type="hidden" id="guests" value="<%= bookingDetails.guests %>">
+
         </div>
     </div>
 </div>
+<br>
+<br>
+
+<script>
+    // Extract variables from hidden inputs
+    const listingId = document.getElementById('listing-id').value;
+    const checkInDate = document.getElementById('check-in-date').value;
+    const checkOutDate = document.getElementById('check-out-date').value;
+    const guests = document.getElementById('guests').value;
+
+    document.getElementById("pay-now-button").onclick = async function (e) {
+        e.preventDefault();
+
+        // 🔵 1. Create order on backend (using the correct route: /listings/:id/create-order)
+        const orderResponse = await fetch(`/listings/${listingId}/create-order`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                checkInDate: checkInDate,
+                checkOutDate: checkOutDate,
+                guests: guests
+            })
+        });
+
+        if (!orderResponse.ok) {
+            const error = await orderResponse.json();
+            alert(`Error creating payment order: ${error.error || 'Unknown server error'}`);
+            return;
+        }
+
+        const order = await orderResponse.json();
+
+        // 🔵 2. Open Razorpay popup
+        const options = {
+            // ** CORRECT ACCESS: Use the variable passed from the controller, not process.env **
+            key: "<%= razorpayKeyId %>", 
+            amount: order.amount, // Amount in paisa
+            currency: "INR",
+            name: "<%= listing.title %>",
+            description: "Booking Reservation",
+            image: "<%= listing.image.url %>",
+            order_id: order.id, 
+            handler: function (response) {
+
+                // 🔵 3. Verify payment on backend by submitting the form 
+                // This targets your createBooking route: /listings/:id/reservations
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/listings/${listingId}/reservations`; 
+
+                // Send booking details and payment proof as hidden inputs
+                const dataToSend = [
+                    // Booking data (must be named as booking[field] for server to read it)
+                    { name: 'booking[checkInDate]', value: checkInDate },
+                    { name: 'booking[checkOutDate]', value: checkOutDate },
+                    { name: 'booking[guests]', value: guests },
+                    // Razorpay Payment Proof
+                    { name: 'razorpay_payment_id', value: response.razorpay_payment_id },
+                    { name: 'razorpay_order_id', value: response.razorpay_order_id },
+                    { name: 'razorpay_signature', value: response.razorpay_signature }
+                ];
+
+                dataToSend.forEach(item => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = item.name;
+                    input.value = item.value;
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit(); 
+            },
+            prefill: {
+                name: "<%= currUser.username || '' %>", 
+                email: "<%= currUser.email || '' %>", 
+                contact: ""
+            },
+            theme: { color: "#ff385c" }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function (response){
+            alert("Payment Failed: " + response.error.description);
+        });
+        rzp.open();
+    };
+</script> 

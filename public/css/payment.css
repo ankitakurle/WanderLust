@@ -1,18 +1,10 @@
-/* -------------------------------------- */
-/* AIRBNB PAYMENT PAGE STYLING */
-/* -------------------------------------- */
 
-/* Ensure the main page structure is clean */
-.payment-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
 
 /* Card style for the right-hand booking summary */
 .summary-card {
-    margin-top: 75px;
-    margin-left: 50px;
-    width:450px;
+    /* margin-top: 75px;
+    margin-left: 50px; */
+    width:550px;
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 1.5rem;
@@ -20,160 +12,9 @@
     /* position: sticky; */
     top: 20px;
 }
-
-/* Payment method box styling (for each row) */
-.payment-option {
-    border: none;
-    margin-bottom: 0;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #eee; 
-    display: block; 
-    position: relative; /* Crucial: sets the context for absolute radio input */
-}
-
-.payment-option:last-child {
-    border-bottom: none;
-}
-
-.payment-option:hover {
-    background-color: #f7f7f7;
-}
-
-/* FIX: Hide the actual radio button but make the whole area clickable */
-.payment-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    margin: 0;
-    z-index: 10; /* Ensures the hidden input is on top and clickable */
-}
-
-/* Container for the content and the custom radio button */
-/* Must be a sibling of the hidden input for the CSS selector to work */
-.payment-option-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding-right: 30px; 
-    position: relative; /* Needed to anchor the custom radio */
-    pointer-events: none; /* Prevents this content div from blocking the click on the input */
-}
-
-/* Custom radio container for visual styling (positioned absolutely on the right) */
-.custom-radio-container {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-}
-
-.custom-radio {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid #717171; 
-    display: inline-block;
-    transition: border-color 0.2s;
-    box-sizing: border-box; 
-    pointer-events: none; /* Must not block clicks */
-}
-
-/* ********** CRITICAL FIX: ADJACENT SIBLING SELECTOR ********** */
-/* When the hidden input is checked, apply styles to its sibling content container */
-input[type="radio"]:checked ~ .payment-option-content .custom-radio {
-    border-color: #000;
-    border-width: 2px;
-}
-
-input[type="radio"]:checked ~ .payment-option-content .custom-radio-container::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #000;
-    pointer-events: none;
-}
-/* ************************************************************* */
+.heading{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     
-.payment-selection-box {
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 1.2rem;
-}
-
-/* Content Alignment */
-.option-details {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    pointer-events: none;
-}
-
-/* Specific styling for all icons and the UPI logo container */
-.option-details i, 
-.option-details .upi-logo {
-    font-size: 1.25rem; /* Default size for icons */
-    width: 20px; /* Standardize icon width */
-    height: 20px; /* Standardize icon height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0; /* Prevent shrinking if space is tight */
-}
-
-/* FIX: Specifically target the image inside .upi-logo to control its size */
-.option-details .upi-logo img {
-    max-width: 100%; /* Ensures it fits within its parent .upi-logo container */
-    max-height: 100%; /* Ensures it fits within its parent .upi-logo container */
-    width: auto; /* Allow natural width */
-    height: auto; /* Allow natural height */
-    object-fit: contain; /* Ensures the entire image is visible without cropping */
-}
-
-
-/* Customizing the 'Next' button */
-.btn-airbnb-primary {
-    
-    color: black;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color 0.2s;
-    float: right; 
-    width: 100px;
-}
-.btn-airbnb-primary:hover {
-    background-color: #000000; 
-    border-color: #000000;
-}
-
-.listing-preview img{
-    height: 80px;
-    width: 80px;
-    object-fit: cover;
-}
-.details{
-    padding-left:20px;
-}
-
-.option-details p{
-    color: #000000;
-    font-size: 1rem;
 }
 
